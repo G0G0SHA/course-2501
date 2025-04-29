@@ -2,8 +2,6 @@
 using System.Linq;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
-using Newtonsoft.Json;
-using System.IO;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System;
@@ -12,6 +10,8 @@ using Market.Windows;
 using System.Globalization;
 using System.Diagnostics;
 using System.Windows.Data;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace Market
 {
@@ -27,8 +27,10 @@ namespace Market
             throw new NotImplementedException();
         }
     }
+
     public class MainWindowViewModel : INotifyPropertyChanged
     {
+        private readonly AppDbContext _dbContext;
         private ObservableCollection<AutoPart> _autoParts = new ObservableCollection<AutoPart>();
         public ObservableCollection<AutoPart> AutoParts
         {
@@ -44,6 +46,7 @@ namespace Market
                 });
             }
         }
+
         private List<AutoPart> _allParts;
         public List<string> AllColors => _allParts.SelectMany(p => p.Colors).Distinct().ToList();
         public List<string> AllSizes => _allParts.SelectMany(p => p.Sizes).Distinct().ToList();
@@ -104,7 +107,6 @@ namespace Market
                 ApplyFilters();
             }
         }
-        
 
         public List<string> Categories { get; set; }
         public ICommand OpenProductCommand { get; }
@@ -118,13 +120,15 @@ namespace Market
 
         public MainWindowViewModel()
         {
+            _dbContext = new AppDbContext();
             OpenProductCommand = new RelayCommand<string>(OpenProduct);
             ApplyFiltersCommand = new RelayCommand(ApplyFilters);
             ResetFiltersCommand = new RelayCommand(ResetFilters);
             AddProductCommand = new RelayCommand(AddProduct);
             EditProductCommand = new RelayCommand<AutoPart>(EditProduct);
             DeleteProductCommand = new RelayCommand<string>(DeleteProduct);
-            LoadAutoParts();
+            LoadAutoPartsAsync().ConfigureAwait(false);
+
             PropertyChanged += (s, e) =>
             {
                 if (e.PropertyName == nameof(SearchText) ||
@@ -136,38 +140,22 @@ namespace Market
             };
         }
 
-
-       
-
-
-        private void OpenProduct(string productId)
-        {
-            App.NavigateToProductDetail(productId, this);
-        }
-
-        private void LoadAutoParts()
+        private async Task LoadAutoPartsAsync()
         {
             try
             {
-                string json = File.ReadAllText("autoparts.json");
-                var settings = new JsonSerializerSettings
-                {
-                    Error = (sender, args) =>
-                    {
-                        if (args.ErrorContext.Path.Contains("Price"))
-                        {
-                            args.ErrorContext.Handled = true;
-                        }
-                    }
-                };
+                _allParts = await _dbContext.AutoParts
+                    .Include(p => p.Colors)
+                    .Include(p => p.Sizes)
+                    .Include(p => p.RelatedProducts)
+                    .ToListAsync();
 
-                _allParts = JsonConvert.DeserializeObject<List<AutoPart>>(json, settings);
                 AutoParts = new ObservableCollection<AutoPart>(_allParts);
                 Categories = _allParts
-                                .Select(p => p.Category)
-                                .Distinct()
-                                .OrderBy(c => c)
-                                .ToList();
+                    .Select(p => p.Category)
+                    .Distinct()
+                    .OrderBy(c => c)
+                    .ToList();
             }
             catch (Exception ex)
             {
@@ -181,17 +169,14 @@ namespace Market
         {
             try
             {
-                // Получаем MainWindow
                 var mainWindow = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
                 if (mainWindow == null) return;
 
-                // Получаем значения фильтров
                 decimal? priceFrom = GetDecimalValue(mainWindow.PriceFromTextBox.Text);
                 decimal? priceTo = GetDecimalValue(mainWindow.PriceToTextBox.Text);
                 string selectedCategory = mainWindow.CategoryComboBox.SelectedItem?.ToString();
                 bool inStockOnly = mainWindow.InStockCheckBox.IsChecked ?? false;
 
-                // Применяем фильтры
                 var filtered = _allParts
                     .Where(p => FilterBySearchText(p))
                     .Where(p => FilterByCategory(p, selectedCategory))
@@ -201,14 +186,12 @@ namespace Market
                     .Where(p => FilterBySize(p, SelectedSize))
                     .ToList();
 
-                // Полностью обновляем коллекцию
                 AutoParts.Clear();
                 foreach (var item in filtered)
                 {
                     AutoParts.Add(item);
                 }
 
-                // Принудительно обновляем ItemsControl
                 mainWindow.PartsItemsControl.ItemsSource = null;
                 mainWindow.PartsItemsControl.ItemsSource = AutoParts;
             }
@@ -224,7 +207,6 @@ namespace Market
                 return result;
             return null;
         }
-
 
         private bool FilterBySearchText(AutoPart part)
         {
@@ -286,19 +268,30 @@ namespace Market
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private void SaveAutoParts()
+        private async Task SaveAutoPartsAsync(AutoPart part)
         {
             try
             {
-                string json = JsonConvert.SerializeObject(_allParts, Formatting.Indented);
-                File.WriteAllText("autoparts.json", json);
+                if (part.Id == null)
+                {
+                    part.Id = Guid.NewGuid().ToString();
+                    await _dbContext.AutoParts.AddAsync(part);
+                }
+                else
+                {
+                    _dbContext.AutoParts.Update(part);
+                }
+
+                await _dbContext.SaveChangesAsync();
+                await LoadAutoPartsAsync();
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка сохранения данных: {ex.Message}");
             }
         }
-        public void AddProduct()
+
+        public async void AddProduct()
         {
             if (App.CurrentUser?.IsAdmin != true)
             {
@@ -309,13 +302,12 @@ namespace Market
             var window = new AddProductWindow();
             if (window.ShowDialog() == true)
             {
-                _allParts.Add(window.NewProduct);
+                await SaveAutoPartsAsync(window.NewProduct);
                 ApplyFilters();
-                SaveAutoParts();
             }
         }
 
-        public void EditProduct(AutoPart product)
+        public async void EditProduct(AutoPart product)
         {
             if (App.CurrentUser?.IsAdmin != true)
             {
@@ -326,12 +318,12 @@ namespace Market
             var window = new AddProductWindow(product);
             if (window.ShowDialog() == true)
             {
+                await SaveAutoPartsAsync(window.NewProduct);
                 ApplyFilters();
-                SaveAutoParts();
             }
         }
 
-        public void DeleteProduct(string productId)
+        public async void DeleteProduct(string productId)
         {
             if (App.CurrentUser?.IsAdmin != true)
             {
@@ -341,58 +333,20 @@ namespace Market
 
             if (MessageBox.Show("Удалить этот товар?", "Подтверждение", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                var product = _allParts.FirstOrDefault(p => p.Id == productId);
+                var product = await _dbContext.AutoParts.FirstOrDefaultAsync(p => p.Id == productId);
                 if (product != null)
                 {
-                    _allParts.Remove(product);
+                    _dbContext.AutoParts.Remove(product);
+                    await _dbContext.SaveChangesAsync();
+                    await LoadAutoPartsAsync();
                     ApplyFilters();
-                    SaveAutoParts();
                 }
             }
         }
 
-
-    }
-    public class AutoPart
+        private void OpenProduct(string productId)
         {
-            public string Id { get; set; } = Guid.NewGuid().ToString();
-            public string Title { get; set; }
-            public string ShortTitle { get; set; }
-            public string FullTitle { get; set; }
-            public string Description { get; set; }
-            public string ImagePath { get; set; }
-            public string Category { get; set; }
-            public double Rating { get; set; }
-            private decimal _price;
-            public decimal Price
-            {
-                get => _price;
-                set => _price = value;
-            }
-            public string PriceDisplay => _price > 0 ? _price.ToString("C0", new CultureInfo("en-US")) : "Стоимость уточняйте";
-            public int Quantity { get; set; }
-            public string Color { get; set; }
-            public string Size { get; set; }
-            public string DeliveryCountry { get; set; }
-            public decimal Discount { get; set; }
-            public bool IsAvailable { get; set; }
-            public List<string> RelatedProducts { get; set; } = new List<string>();
-            public int PurchasedCount { get; set; }
-            public string Manufacturer { get; set; }
-            public DateTime ProductionDate { get; set; }
-            public string Year { get; set; }
-            public string EngineType { get; set; }
-            public string Marking { get; set; }
-            public string EngineNumber { get; set; }
-            public string DeliveryDate { get; set; }
-            public string CheckPeriod { get; set; }
-            public string DeliveryArea { get; set; }
-            public string Installment { get; set; }
-            public List<string> ImagePaths { get; set; } = new List<string>();
-            public List<string> Colors { get; set; } = new List<string>();
-            public List<string> Sizes { get; set; } = new List<string>();
-            public DateTime AddedDate { get; set; } = DateTime.Now;
-            public bool IsNew => (DateTime.Now - AddedDate).TotalDays < 30;
+            App.NavigateToProductDetail(productId, this);
         }
-    
+    }
 }

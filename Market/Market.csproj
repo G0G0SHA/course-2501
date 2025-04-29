@@ -86,9 +86,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AppDbContext.cs" />
     <Compile Include="AuthWindow.xaml.cs">
       <DependentUpon>AuthWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AutoPart.cs" />
     <Compile Include="LocalizationManager.cs" />
     <Page Include="AddProductWindow.xaml">
       <SubType>Designer</SubType>

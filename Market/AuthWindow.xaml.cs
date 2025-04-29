@@ -38,8 +38,7 @@ namespace Market
             }
             else
             {
-                MessageBox.Show("Неверный логин или пароль", "Ошибка",
-                              MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Неверный логин или пароль", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
