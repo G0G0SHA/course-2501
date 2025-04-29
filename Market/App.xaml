@@ -1,0 +1,133 @@
+﻿<Application x:Class="Market.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Market"
+             StartupUri="AuthWindow.xaml"
+             ShutdownMode="OnExplicitShutdown">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Resources/Strings.en-US.xaml"/>
+                <ResourceDictionary Source="/Resources/Strings.ru-RU.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            
+            <!-- Статические ресурсы -->
+            <SolidColorBrush x:Key="PrimaryBrush" Color="#FF3498DB"/>
+            <SolidColorBrush x:Key="SecondaryBrush" Color="#FF2ECC71"/>
+            <SolidColorBrush x:Key="WarningBrush" Color="#FFE74C3C"/>
+            
+            <!-- Динамические ресурсы (используют StaticResource внутри) -->
+            <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="{StaticResource PrimaryBrush}"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="Padding" Value="10 5"/>
+            </Style>
+
+            <Style x:Key="WarningTextStyle" TargetType="TextBlock">
+                <Setter Property="Foreground" Value="{StaticResource WarningBrush}"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="FontSize" Value="14"/>
+            </Style>
+
+
+            <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+            
+            <Style x:Key="TransparentButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderBrush" Value="Transparent"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <ContentPresenter/>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            
+            
+            <Style x:Key="CollapsiblePanelStyle" TargetType="StackPanel">
+                <Setter Property="Width" Value="50"/>
+                <Setter Property="Background" Value="#f0f0f0"/>
+                <Setter Property="VerticalAlignment" Value="Top"/>
+                <Setter Property="HorizontalAlignment" Value="Left"/>
+                <Setter Property="Margin" Value="0,140,0,0"/>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Width" Value="200"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style x:Key="CollapsibleButtonStyle" TargetType="Button">
+                <Setter Property="Width" Value="40"/>
+                <Setter Property="Height" Value="40"/>
+                <Setter Property="Margin" Value="5"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderBrush" Value="Transparent"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Grid>
+                                <ContentPresenter/>
+                                <TextBlock x:Name="ButtonText" 
+                               Text="{TemplateBinding Tag}"
+                               VerticalAlignment="Center"
+                               Margin="45,0,0,0"
+                               Visibility="Collapsed"/>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="ButtonText" Property="Visibility" Value="Visible"/>
+                                </Trigger>
+                                <DataTrigger Binding="{Binding Width, RelativeSource={RelativeSource AncestorType=StackPanel}}" Value="200">
+                                    <Setter TargetName="ButtonText" Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Cursor x:Key="AlternateSelectCursor">Resources/Neon Gamer Y9P Alternate Select.cur</Cursor>
+            <Cursor x:Key="BusyCursor">Resources/Neon Gamer Y9P Busy.cur</Cursor>
+            <Cursor x:Key="DiagonalResize1Cursor">Resources/Neon Gamer Y9P Diagonal Resize 1.cur</Cursor>
+            <Cursor x:Key="DiagonalResize2Cursor">Resources/Neon Gamer Y9P Diagonal Resize 2.cur</Cursor>
+            <Cursor x:Key="HandwritingCursor">Resources/Neon Gamer Y9P Handwriting.cur</Cursor>
+            <Cursor x:Key="HelpSelectCursor">Resources/Neon Gamer Y9P Help Select.cur</Cursor>
+            <Cursor x:Key="HorizontalResizeCursor">Resources/Neon Gamer Y9P Horizontal Resize.cur</Cursor>
+            <Cursor x:Key="LinkSelectCursor">Resources/Neon Gamer Y9P Link Select.cur</Cursor>
+            <Cursor x:Key="LocationSelectCursor">Resources/Neon Gamer Y9P Location Select.cur</Cursor>
+            <Cursor x:Key="MoveCursor">Resources/Neon Gamer Y9P Move.cur</Cursor>
+            <Cursor x:Key="PersonSelectCursor">Resources/Neon Gamer Y9P Person Select.cur</Cursor>
+            <Cursor x:Key="PrecisionSelectCursor">Resources/Neon Gamer Y9P Precision Select.cur</Cursor>
+            <Cursor x:Key="TextSelectCursor">Resources/Neon Gamer Y9P Text Select.cur</Cursor>
+            <Cursor x:Key="UnavailableCursor">Resources/Neon Gamer Y9P Unavailable.cur</Cursor>
+            <Cursor x:Key="VerticalResizeCursor">Resources/Neon Gamer Y9P Vertical Resize.cur</Cursor>
+            <Cursor x:Key="WorkingInBackgroundCursor">Resources/Neon Gamer Y9P Working in Background.cur</Cursor>
+            <Cursor x:Key="DefaultCursor">Resources/Neon Gamer Y9P.cur</Cursor>
+            
+            
+            <Style TargetType="{x:Type Window}">
+                <Setter Property="Cursor" Value="{StaticResource DefaultCursor}"/>
+            </Style>
+            <Style TargetType="{x:Type FrameworkElement}">
+                <Setter Property="Cursor" Value="{StaticResource DefaultCursor}"/>
+                <Style.Triggers>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Cursor" Value="{StaticResource UnavailableCursor}"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            
+            <Style TargetType="{x:Type TextBox}">
+                <Setter Property="Cursor" Value="{StaticResource TextSelectCursor}"/>
+            </Style>
+
+            <Style TargetType="{x:Type Button}">
+                <Setter Property="Cursor" Value="{StaticResource LinkSelectCursor}"/>
+            </Style>
+            
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

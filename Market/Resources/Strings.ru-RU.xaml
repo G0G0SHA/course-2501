@@ -1,0 +1,70 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+	<!-- Для окна авторизации -->
+    <system:String x:Key="AuthTitle">Авторизация</system:String>
+    <system:String x:Key="Login">Логин:</system:String>
+    <system:String x:Key="Password">Пароль:</system:String>
+    <system:String x:Key="Client">Клиент</system:String>
+    <system:String x:Key="Admin">Администратор</system:String>
+    <system:String x:Key="LoginButton">Войти</system:String>
+	
+	<!-- Основные -->
+	<system:String x:Key="AppTitle">Магазин автозапчастей</system:String>
+	<system:String x:Key="Filters">Фильтры</system:String>
+	<system:String x:Key="Category">Категория</system:String>
+	<system:String x:Key="Price">Цена</system:String>
+	<system:String x:Key="From">От:</system:String>
+	<system:String x:Key="To">До:</system:String>
+	<system:String x:Key="Availability">Наличие</system:String>
+	<system:String x:Key="InStockOnly">Только в наличии</system:String>
+	<system:String x:Key="Color">Цвет</system:String>
+	<system:String x:Key="Size">Размер</system:String>
+	<system:String x:Key="ResetFilters">Сбросить фильтры</system:String>
+	<system:String x:Key="Search">Поиск</system:String>
+
+	<!-- Меню -->
+	<system:String x:Key="Calendar">Календарь</system:String>
+	<system:String x:Key="Database">База данных</system:String>
+	<system:String x:Key="Contacts">Контакты</system:String>
+	<system:String x:Key="Report">Отчёт</system:String>
+	<system:String x:Key="Staff">Персонал</system:String>
+	<system:String x:Key="Calculator">Калькулятор</system:String>
+	<system:String x:Key="AddProduct">Добавить товар</system:String>
+
+	<!-- Карточка товара -->
+	<system:String x:Key="Year">Год:</system:String>
+	<system:String x:Key="EngineType">Тип двигателя:</system:String>
+	<system:String x:Key="Marking">Маркировка:</system:String>
+	<system:String x:Key="EngineNumber">Номер двигателя:</system:String>
+	<system:String x:Key="Description">Описание:</system:String>
+	<system:String x:Key="AddToCart">В корзину</system:String>
+	<system:String x:Key="Buy">Купить</system:String>
+	<system:String x:Key="AnyQuestions">Есть вопросы?</system:String>
+	<system:String x:Key="OrderCall">Заказать звонок</system:String>
+	<!-- Для AddProductWindow -->
+<system:String x:Key="AddEditProductTitle">Добавить/Редактировать товар</system:String>
+<system:String x:Key="Title">Название:</system:String>
+<system:String x:Key="ShortTitle">Краткое название:</system:String>
+<system:String x:Key="Images">Изображения:</system:String>
+<system:String x:Key="Add">Добавить</system:String>
+<system:String x:Key="Colors">Цвета:</system:String>
+<system:String x:Key="Sizes">Размеры:</system:String>
+<system:String x:Key="RelatedProducts">Связанные товары:</system:String>
+<system:String x:Key="OK">OK</system:String>
+<system:String x:Key="Cancel">Отмена</system:String>
+
+<!-- Для ProductDetailWindow -->
+<system:String x:Key="ProductDetails">Детали товара</system:String>
+<system:String x:Key="Edit">Редактировать</system:String>
+<system:String x:Key="Delete">Удалить</system:String>
+<system:String x:Key="Delivery">Доставка:</system:String>
+<system:String x:Key="Check">Проверка:</system:String>
+<system:String x:Key="DeliveryRegion">Регион доставки:</system:String>
+<system:String x:Key="InstallmentPlan">Рассрочка:</system:String>
+<system:String x:Key="Language">Язык</system:String>
+<system:String x:Key="LanguageRussian">Русский</system:String>
+<system:String x:Key="LanguageEnglish">Английский</system:String>
+
+
+</ResourceDictionary>

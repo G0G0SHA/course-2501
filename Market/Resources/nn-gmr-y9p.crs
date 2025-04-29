@@ -1,0 +1,51 @@
+﻿[Arrow]
+Path=Neon Gamer Y9P.cur
+
+[AppStarting]
+Path=Neon Gamer Y9P Working in Background.cur
+
+[Wait]
+Path=Neon Gamer Y9P Busy.cur
+
+[Crosshair]
+Path=Neon Gamer Y9P Precision Select.cur
+
+[IBeam]
+Path=Neon Gamer Y9P Text Select.cur
+
+[UpArrow]
+Path=Neon Gamer Y9P Alternate Select.cur
+
+[No]
+Path=Neon Gamer Y9P Unavailable.cur
+
+[Pin]
+Path=Neon Gamer Y9P Location Select.cur
+
+[Person]
+Path=Neon Gamer Y9P Person Select.cur
+
+[NWPen]
+Path=Neon Gamer Y9P Handwriting.cur
+
+[SizeNESW]
+Path=Neon Gamer Y9P Diagonal Resize 2.cur
+
+[SizeNWSE]
+Path=Neon Gamer Y9P Diagonal Resize 1.cur
+
+[Help]
+Path=Neon Gamer Y9P Help Select.cur
+
+[SizeAll]
+Path=Neon Gamer Y9P Move.cur
+
+[Hand]
+Path=Neon Gamer Y9P Link Select.cur
+
+[SizeNS]
+Path=Neon Gamer Y9P Vertical Resize.cur
+
+[SizeWE]
+Path=Neon Gamer Y9P Horizontal Resize.cur
+
